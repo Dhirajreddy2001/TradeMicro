@@ -7,7 +7,7 @@
              GET Total Volume of a specific stock trades : api/trades/symbol/{symbol}/volume
              GET Get NEt Profit_loss of a specific stock : api/trades/symbol/{symbol}/profit-loss
 
-# Accessing Swagger 
+# Accessing Swagger For testing endpoints
  Access swagger UI using http://localhost:8080/swagger-ui.html
 
  # File Structure Information
