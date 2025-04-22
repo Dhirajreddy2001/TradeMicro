@@ -1,11 +1,12 @@
 # Following is the Trade Analytics Micro Service(TAM) 
 
 # API END Points: localhost:8080/
-             GET All Trading Information : api/trades
-             GET Information about  a specific Stock : api/trades/symbol/{symbol}
-             GET Average Price of a specific stock : api/trades/symbol/{symbol}/average-price
-             GET Total Volume of a specific stock trades : api/trades/symbol/{symbol}/volume
-             GET Get NEt Profit_loss of a specific stock : api/trades/symbol/{symbol}/profit-loss
+      GET All Trading Information : api/trades
+      GET limited Trading Information : api/trades/limit?page=#&size=# //implemnts pagation to handle large return value  page reload error
+      GET Information about  a specific Stock : api/trades/symbol/{symbol}
+      GET Average Price of a specific stock : api/trades/symbol/{symbol}/average-price
+      GET Total Volume of a specific stock trades : api/trades/symbol/{symbol}/volume
+      GET Get NEt Profit_loss of a specific stock : api/trades/symbol/{symbol}/profit-loss
 
 # Accessing Swagger For testing endpoints
  Access swagger UI using http://localhost:8080/swagger-ui.html
