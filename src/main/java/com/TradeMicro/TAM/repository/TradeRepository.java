@@ -2,6 +2,7 @@ package com.TradeMicro.TAM.repository;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -40,6 +41,21 @@ public class TradeRepository {
 	{
 		String sqlString = "SLECT SUM(profitloss) from STOCKTRADES WHERE SYMBOL = ?";
 		return jdbcTemplate.queryForObject(sqlString,Double.class,symbol );
+	}
+	public List<Trade> findPaginated(int page,int size)
+	{
+		String sql = """
+		        SELECT * FROM STOCKTRADES
+		        ORDER BY TRADE_DATE DESC
+		        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+		    """;
+
+		    int offset = page * size;
+		    System.out.println("Page: " + page + ", Size: " + size + ", Offset: " + offset);
+
+
+		    return jdbcTemplate.query(sql, new TradeRowMapper(), offset, size);
+		
 	}
 	
 }

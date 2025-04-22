@@ -4,10 +4,12 @@ package com.TradeMicro.TAM.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -50,6 +52,17 @@ public class TAMController {
 	{
 		return tradeService.getTotalProfitLoss(symbol);
 	}
+	@GetMapping("/limit")
+	public ResponseEntity<List<Trade>> getPaginatedTrades(
+	        @RequestParam(defaultValue = "0") final int page,
+	        @RequestParam(defaultValue = "20") final int size) {
+		
+		  System.out.println("📡 Controller hit with page=" + page + ", size=" + size);
+		  
+	    return ResponseEntity.ok(tradeService.getPaginatedTrades(page, size));
+	}
+
+	
 	
 	
 	

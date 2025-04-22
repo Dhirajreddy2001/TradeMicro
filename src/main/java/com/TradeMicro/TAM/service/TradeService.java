@@ -36,4 +36,10 @@ public class TradeService {
 	{
 		return tradeRepository.getTotalProfitLoss(symbol);
 	}
+
+	public List<Trade> getPaginatedTrades(int page, int size) {
+		
+		 System.out.println("✅ TradeService: Pagination method called");
+		return tradeRepository.findPaginated(page, size);
+	}
 }
