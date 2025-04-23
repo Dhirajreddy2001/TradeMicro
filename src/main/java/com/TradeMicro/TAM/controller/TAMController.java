@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.TradeMicro.TAM.dto.TradeDTO;
 import com.TradeMicro.TAM.model.Trade;
 import com.TradeMicro.TAM.service.TradeService;
 
@@ -53,11 +53,11 @@ public class TAMController {
 		return tradeService.getTotalProfitLoss(symbol);
 	}
 	@GetMapping("/limit")
-	public ResponseEntity<List<Trade>> getPaginatedTrades(
+	public ResponseEntity<List<TradeDTO>> getPaginatedTrades(
 	        @RequestParam(defaultValue = "0") final int page,
 	        @RequestParam(defaultValue = "20") final int size) {
 		
-		  System.out.println("📡 Controller hit with page=" + page + ", size=" + size);
+		  System.out.println("Controller hit with page=" + page + ", size=" + size);
 		  
 	    return ResponseEntity.ok(tradeService.getPaginatedTrades(page, size));
 	}
