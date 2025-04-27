@@ -20,9 +20,10 @@ jobs:
           ORACLE_DATABASE: XEPDB1
         options: >-
           --health-cmd "echo 'SELECT 1 FROM DUAL;' | sqlplus -S system/Oracle123@localhost:1521/XEPDB1 || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
+          --health-interval 20s
+          --health-timeout 10s
+          --health-retries 15
+          --shm-size 1g
 
     steps:
       - name: Checkout code
@@ -35,7 +36,7 @@ jobs:
           pip3 install oracledb pandas
 
       - name: Wait for Oracle DB to fully start
-        run: sleep 90
+        run: sleep 300
 
       - name: Install SQL*Plus
         run: |
