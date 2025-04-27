@@ -3,7 +3,7 @@ name: Build and Test Spring Boot Microservice
 on:
   push:
     branches:
-      - master
+      - CI
 
 jobs:
   build:
@@ -35,6 +35,7 @@ jobs:
       run: |
         echo "Creating Table"
         cat data/DB_CreateTable.sql | sqlplus system/Oracle123@localhost:1521/XEPDB1
+
 
     - name: Load Test Data
       run: python3 data/load_trades.py
