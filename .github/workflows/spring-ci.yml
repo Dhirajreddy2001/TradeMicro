@@ -18,12 +18,18 @@ jobs:
         env:
           ORACLE_PASSWORD: Oracle123
           ORACLE_DATABASE: XEPDB1
+        options: >-
+          --health-cmd "echo 'SELECT 1 FROM DUAL;' | sqlplus -S system/Oracle123@localhost/XEPDB1 || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+          --mount type=bind,source=${{ github.workspace }}/data,target=/data
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python and Install Dependencies
         run: |
           sudo apt update
           sudo apt install -y python3 python3-pip
@@ -32,15 +38,14 @@ jobs:
       - name: Wait for Oracle DB to fully start
         run: sleep 180
 
-      - name: Create Application Schema
+      - name: Create Application Schema inside Oracle DB
         run: |
-         echo "Creating STOCKTRADES table..."
-         docker exec oracle-db bash -c "cat /path/to/DB_CreateTable.sql | sqlplus system/Oracle123@localhost/XEPDB1"
+          echo "Creating STOCKTRADES table inside Oracle DB..."
+          docker exec oracle-db bash -c "cat /data/DB_CreateTable.sql | sqlplus system/Oracle123@localhost/XEPDB1"
 
-
-      - name: Load Test Data
+      - name: Load Test Data into Oracle
         run: |
-          echo "Loading trades data into Oracle..."
+          echo "Loading cleaned trades CSV into Oracle DB..."
           python3 data/load_trades.py
 
       - name: Build and Test Spring Boot Application
