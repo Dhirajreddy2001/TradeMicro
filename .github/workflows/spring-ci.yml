@@ -29,7 +29,7 @@ jobs:
         pip3 install oracledb pandas
 
     - name: Wait for Oracle DB
-      run: sleep 60
+      run: sleep 180
 
     - name: Create Schema
       run: |
