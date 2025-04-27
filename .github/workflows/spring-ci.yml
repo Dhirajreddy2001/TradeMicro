@@ -32,12 +32,18 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y python3 python3-pip libaio-dev
-          pip3 install oracledb pandas
+          pip3 install oracledb pandas os
 
       - name: Wait for Oracle DB to fully start
         run: sleep 240
 
       - name: Load Test Data into Oracle
+        env:
+         DB_USER: system
+         DB_PASSWORD: Oracle123
+         DB_HOST: localhost
+         DB_PORT: 1521
+         DB_SERVICE: XEPDB1
         run: |
           echo "Running load_trades.py to create table and insert data..."
           python3 data/load_trades.py

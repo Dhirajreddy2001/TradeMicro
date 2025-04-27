@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import oracledb  # no need to call init_oracle_client
 
@@ -8,9 +9,9 @@ df = pd.read_csv(csv_file)
 # === Step 2: Connection details
 username = "System"
 password = "Oracle123"
-host = "localhost"
-port = 1521
-service_name = "ORCLPDB1"
+host = os.getenv("DB_HOST", "localhost")
+port = os.getenv("DB_PORT", "1521")
+service_name = os.getenv("DB_SERVICE", "XEPDB1")
 
 dsn = f"{host}:{port}/{service_name}"
 
