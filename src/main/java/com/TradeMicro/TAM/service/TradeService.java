@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.TradeMicro.TAM.dto.TradeDTO;
 import com.TradeMicro.TAM.model.Trade;
 import com.TradeMicro.TAM.repository.TradeRepository;
 
@@ -37,9 +38,20 @@ public class TradeService {
 		return tradeRepository.getTotalProfitLoss(symbol);
 	}
 
-	public List<Trade> getPaginatedTrades(int page, int size) {
+	public List<TradeDTO> getPaginatedTrades(int page, int size) {
 		
-		 System.out.println("✅ TradeService: Pagination method called");
-		return tradeRepository.findPaginated(page, size);
+		List<Trade> trades = tradeRepository.findPaginated(page, size);
+		
+		return trades.stream().map(trade -> {
+			TradeDTO dto = new TradeDTO();
+			dto.setSymbol(trade.getSymbol());
+			dto.setPrice(trade.getPrice());
+			dto.setType(trade.getType());
+			dto.setProfitLoss(trade.getProfitLoss());
+			dto.setTradeDate(trade.getTradeDate());
+			
+			return dto;
+			
+		}).toList();
 	}
 }
