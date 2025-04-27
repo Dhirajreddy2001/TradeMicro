@@ -2,7 +2,7 @@ import pandas as pd
 import oracledb  # no need to call init_oracle_client
 
 # === Step 1: Load the cleaned CSV ===
-csv_file = "/data/cleaned_trades.csv"
+csv_file = "data/cleaned_trades.csv"
 df = pd.read_csv(csv_file)
 
 # === Step 2: Connection details
