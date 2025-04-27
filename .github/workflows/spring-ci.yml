@@ -17,7 +17,6 @@ jobs:
           - 1521:1521
         env:
           ORACLE_PASSWORD: Oracle123
-          ORACLE_DATABASE: XEPDB1
         options: >-
           --health-cmd "echo 'SELECT 1 FROM DUAL;' | sqlplus -S system/Oracle123@localhost:1521/XEPDB1 || exit 1"
           --health-interval 20s
