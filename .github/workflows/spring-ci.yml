@@ -3,7 +3,7 @@ name: Build and Test Spring Boot Microservice
 on:
   push:
     branches:
-      - ci
+      - master
   workflow_dispatch:
 
 jobs:
