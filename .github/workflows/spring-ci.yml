@@ -19,33 +19,40 @@ jobs:
           ORACLE_PASSWORD: Oracle123
           ORACLE_DATABASE: XEPDB1
         options: >-
-          --health-cmd "echo 'SELECT 1 FROM DUAL;' | sqlplus -S system/Oracle123@localhost/XEPDB1 || exit 1"
+          --health-cmd "echo 'SELECT 1 FROM DUAL;' | sqlplus -S system/Oracle123@localhost:1521/XEPDB1 || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
-          --mount type=bind,source=${{ github.workspace }}/data,target=/data
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python and Install Dependencies
+      - name: Set up Python
         run: |
           sudo apt update
           sudo apt install -y python3 python3-pip
           pip3 install oracledb pandas
 
       - name: Wait for Oracle DB to fully start
-        run: sleep 180
+        run: sleep 90
 
-      - name: Create Application Schema inside Oracle DB
+      - name: Install SQL*Plus
         run: |
-          echo "Creating STOCKTRADES table inside Oracle DB..."
-          docker exec oracle-db bash -c "cat /data/DB_CreateTable.sql | sqlplus system/Oracle123@localhost/XEPDB1"
+          sudo apt install -y libaio1
+          wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linux.x64-19.21.0.0.0dbru.zip
+          unzip instantclient-basiclite-linux.x64-19.21.0.0.0dbru.zip
+          export LD_LIBRARY_PATH=$PWD/instantclient_19_21:$LD_LIBRARY_PATH
+          sudo ln -s $PWD/instantclient_19_21/sqlplus /usr/bin/sqlplus
 
-      - name: Load Test Data into Oracle
+      - name: Create Application Schema
         run: |
-          echo "Loading cleaned trades CSV into Oracle DB..."
+          echo "Creating STOCKTRADES table..."
+          sqlplus system/Oracle123@localhost:1521/XEPDB1 @data/DB_CreateTable.sql
+
+      - name: Load Test Data
+        run: |
+          echo "Loading trades data into Oracle..."
           python3 data/load_trades.py
 
       - name: Build and Test Spring Boot Application
