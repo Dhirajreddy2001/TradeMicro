@@ -41,10 +41,10 @@ jobs:
 
     - name:  Wait for Oracle DB to fully start
       run: sleep 90
-
-    - name:  Load schema (Optional if using SQL file)
+    - name: Create Schema
       run: |
-        echo "Skipping manual schema creation. Schema must auto-create via app if needed."
+        echo "Creating Table"
+        docker exec oracle-db bash -c "echo \"$(< data/DB_CreateTable.sql)\" | sqlplus system/Oracle123@localhost/XEPDB1"
 
     - name:  Load test data (run your load_trades.py)
       run: |
