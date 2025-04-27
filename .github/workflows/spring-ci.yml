@@ -37,6 +37,17 @@ jobs:
       - name: Wait for Oracle DB to fully start
         run: sleep 240
 
+      - name: Install Oracle Instant Client (SQLPlus)
+        run: |
+          sudo apt update
+          sudo apt install -y libaio1 wget unzip
+          wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linux.x64-21.13.0.0.0dbru.zip
+          wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-sqlplus-linux.x64-21.13.0.0.0dbru.zip
+          unzip instantclient-basiclite-linux.x64-21.13.0.0.0dbru.zip
+          unzip instantclient-sqlplus-linux.x64-21.13.0.0.0dbru.zip
+          echo "$PWD/instantclient_21_13" >> $GITHUB_PATH
+          export LD_LIBRARY_PATH=$PWD/instantclient_21_13:$LD_LIBRARY_PATH
+
       - name: Create Database Table
         run: |
          echo "Running DB_CreateTable.sql..."
