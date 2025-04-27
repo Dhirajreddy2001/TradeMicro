@@ -37,6 +37,12 @@ jobs:
       - name: Wait for Oracle DB to fully start
         run: sleep 240
 
+      - name: Create Database Table
+        run: |
+         echo "Running DB_CreateTable.sql..."
+         echo exit | sqlplus -S system/Oracle123@localhost:1521/XEPDB1 @data/DB_CreateTable.sql
+
+
       - name: Load Test Data into Oracle
         env:
          DB_USER: system
@@ -48,6 +54,11 @@ jobs:
           echo "Running load_trades.py to create table and insert data..."
           python3 data/load_trades.py
 
+      - name: Load Test Data into Oracle
+        if: always()
+        run: |
+         echo "Drop Table after tests"
+         echo exit | sqlplus -S system/Oracle123@localhost:1521/XEPDB1 @data/DB_DropTable.sql
       - name: Build and Test Spring Boot Application
         run: |
           ./mvnw clean install -Dspring.profiles.active=ci
