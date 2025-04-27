@@ -18,41 +18,28 @@ jobs:
         env:
           ORACLE_PASSWORD: Oracle123
         options: >-
-          --health-cmd "echo 'SELECT 1 FROM DUAL;' | sqlplus -S system/Oracle123@localhost:1521/XEPDB1 || exit 1"
+          --health-cmd "echo 'SELECT 1 FROM DUAL;' | sqlplus -S system/Oracle123@localhost/XEPDB1 || exit 1"
           --health-interval 20s
           --health-timeout 10s
           --health-retries 15
           --shm-size 1g
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python and install libraries
         run: |
           sudo apt update
-          sudo apt install -y python3 python3-pip
+          sudo apt install -y python3 python3-pip libaio-dev
           pip3 install oracledb pandas
 
       - name: Wait for Oracle DB to fully start
-        run: sleep 300
+        run: sleep 240
 
-      - name: Install SQL*Plus
+      - name: Load Test Data into Oracle
         run: |
-          sudo apt install -y libaio1
-          wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linux.x64-19.21.0.0.0dbru.zip
-          unzip instantclient-basiclite-linux.x64-19.21.0.0.0dbru.zip
-          export LD_LIBRARY_PATH=$PWD/instantclient_19_21:$LD_LIBRARY_PATH
-          sudo ln -s $PWD/instantclient_19_21/sqlplus /usr/bin/sqlplus
-
-      - name: Create Application Schema
-        run: |
-          echo "Creating STOCKTRADES table..."
-          sqlplus system/Oracle123@localhost:1521/XEPDB1 @data/DB_CreateTable.sql
-
-      - name: Load Test Data
-        run: |
-          echo "Loading trades data into Oracle..."
+          echo "Running load_trades.py to create table and insert data..."
           python3 data/load_trades.py
 
       - name: Build and Test Spring Boot Application
