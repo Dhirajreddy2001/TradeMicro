@@ -34,8 +34,9 @@ jobs:
 
       - name: Create Application Schema
         run: |
-          echo "Creating STOCKTRADES table..."
-          cat data/DB_CreateTable.sql | sqlplus system/Oracle123@localhost:1521/XEPDB1
+         echo "Creating STOCKTRADES table..."
+         docker exec oracle-db bash -c "cat /path/to/DB_CreateTable.sql | sqlplus system/Oracle123@localhost/XEPDB1"
+
 
       - name: Load Test Data
         run: |
