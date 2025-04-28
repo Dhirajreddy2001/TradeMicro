@@ -41,8 +41,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y libaio-dev wget unzip
-          wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linux.x64-21.13.0.0.0dbru.zip
-          wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-sqlplus-linux.x64-21.13.0.0.0dbru.zip
+          wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linux.x64-21.12.0.0.0dbru.zip
+          wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-sqlplus-linux.x64-21.12.0.0.0dbru.zip
           unzip instantclient-basiclite-linux.x64-21.13.0.0.0dbru.zip
           unzip instantclient-sqlplus-linux.x64-21.13.0.0.0dbru.zip
           echo "$PWD/instantclient_21_13" >> $GITHUB_PATH
