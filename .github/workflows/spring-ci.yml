@@ -37,23 +37,6 @@ jobs:
       - name: Wait for Oracle DB to fully start
         run: sleep 240
 
-      - name: Install Oracle Instant Client and SQLPlus
-        run: |
-         sudo apt update
-         sudo apt install -y gnupg2
-         sudo mkdir -p /etc/apt/keyrings
-         curl -fsSL https://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 | gpg --dearmor | sudo tee /etc/apt/keyrings/oracle.gpg > /dev/null
-         echo "deb [signed-by=/etc/apt/keyrings/oracle.gpg] https://yum.oracle.com/repo/OracleLinux/OL7/developer/oracle-instantclient/x86_64/ ./" | sudo tee /etc/apt/sources.list.d/oracle-instantclient.list
-         sudo apt update
-         sudo apt install -y oracle-instantclient-basiclite oracle-instantclient-sqlplus
-
-
-      - name: Create Database Table
-        run: |
-         echo "Running DB_CreateTable.sql..."
-         echo exit | sqlplus -S system/Oracle123@localhost:1521/XEPDB1 @data/DB_CreateTable.sql
-
-
       - name: Load Test Data into Oracle
         env:
          DB_USER: system
@@ -65,11 +48,18 @@ jobs:
           echo "Running load_trades.py to create table and insert data..."
           python3 data/load_trades.py
 
-      - name: Load Test Data into Oracle
-        if: always()
-        run: |
-         echo "Drop Table after tests"
-         echo exit | sqlplus -S system/Oracle123@localhost:1521/XEPDB1 @data/DB_DropTable.sql
       - name: Build and Test Spring Boot Application
         run: |
           ./mvnw clean install -Dspring.profiles.active=ci
+
+      - name: Drop table after tests
+        if: always()
+        env:
+         DB_USER: system
+         DB_PASSWORD: Oracle123
+         DB_HOST: localhost
+         DB_PORT: 1521
+         DB_SERVICE: XEPDB1
+        run: |
+          echo "Dropping table after tests..."
+          python3 data/drop_table.py
