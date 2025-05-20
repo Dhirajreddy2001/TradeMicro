@@ -1,0 +1,11 @@
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE STOCKTRADES';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN -- ORA-00942: table or view does not exist
+            RAISE;
+        END IF;
+END;
+/
+
+EXIT;

@@ -3,7 +3,7 @@ name: Build and Test Spring Boot Microservice
 on:
   push:
     branches:
-      - master
+      - ci
   workflow_dispatch:
 
 jobs:
@@ -17,37 +17,49 @@ jobs:
           - 1521:1521
         env:
           ORACLE_PASSWORD: Oracle123
-          ORACLE_DATABASE: XEPDB1
         options: >-
           --health-cmd "echo 'SELECT 1 FROM DUAL;' | sqlplus -S system/Oracle123@localhost/XEPDB1 || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-          --mount type=bind,source=${{ github.workspace }}/data,target=/data
+          --health-interval 20s
+          --health-timeout 10s
+          --health-retries 15
+          --shm-size 1g
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python and Install Dependencies
+      - name: Set up Python and install libraries
         run: |
           sudo apt update
-          sudo apt install -y python3 python3-pip
+          sudo apt install -y python3 python3-pip libaio-dev
           pip3 install oracledb pandas
 
       - name: Wait for Oracle DB to fully start
-        run: sleep 180
-
-      - name: Create Application Schema inside Oracle DB
-        run: |
-          echo "Creating STOCKTRADES table inside Oracle DB..."
-          docker exec oracle-db bash -c "cat /data/DB_CreateTable.sql | sqlplus system/Oracle123@localhost/XEPDB1"
+        run: sleep 240
 
       - name: Load Test Data into Oracle
+        env:
+         DB_USER: system
+         DB_PASSWORD: Oracle123
+         DB_HOST: localhost
+         DB_PORT: 1521
+         DB_SERVICE: XEPDB1
         run: |
-          echo "Loading cleaned trades CSV into Oracle DB..."
+          echo "Running load_trades.py to create table and insert data..."
           python3 data/load_trades.py
 
       - name: Build and Test Spring Boot Application
         run: |
           ./mvnw clean install -Dspring.profiles.active=ci
+
+      - name: Drop table after tests
+        if: always()
+        env:
+         DB_USER: system
+         DB_PASSWORD: Oracle123
+         DB_HOST: localhost
+         DB_PORT: 1521
+         DB_SERVICE: XEPDB1
+        run: |
+          echo "Dropping table after tests..."
+          python3 data/drop_table.py
